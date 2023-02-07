@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CameraNavGui : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -21,6 +22,17 @@ public class CameraNavGui : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     [SerializeField] private GameObject Cam11;
     [SerializeField] private GameObject Cam12;
 
+    
+    private CameraSystem cameraSystem;
+
+    [Header("Sounds")]
+    [SerializeField] private AudioSource CameraChange;
+
+    [Header("Static Screens")]
+    [SerializeField] private GameObject CameraStatic;
+    [SerializeField] private GameObject CameraStaticVideo;
+   
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         
@@ -28,13 +40,16 @@ public class CameraNavGui : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         {
             OfficeNavGUI.SetActive(false);
             CameraNavGUI.SetActive(true);
+            StartCoroutine(ShowStatic());
             
             StartCoroutine(Delay());
         }
         else if(OfficeNavGUI.activeSelf == false)
         {
+            StartCoroutine(ShowStatic());
             OfficeNavGUI.SetActive(true);
             CameraNavGUI.SetActive(false);
+            
             OfficeCamera.SetActive(true);
             Cam1.SetActive(false);
             Cam2.SetActive(false);
@@ -55,8 +70,19 @@ public class CameraNavGui : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerExit(PointerEventData eventData)
     {
+
         StartCoroutine(Delay());
         
+    }
+
+    IEnumerator ShowStatic()
+    {
+        CameraStatic.SetActive(true);
+        CameraChange.Play();
+        CameraStaticVideo.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        CameraStatic.SetActive(false);
+        CameraStaticVideo.SetActive(false);
     }
 
     IEnumerator Delay()
